@@ -1,7 +1,7 @@
 const admin = require('firebase-admin');
 const bcrypt = require('bcrypt');
 
-const { signInWithEmailAndPassword , onAuthStateChanged, sendPasswordResetEmail, generatePasswordResetLink } = require("firebase/auth"); 
+const { signInWithEmailAndPassword , onAuthStateChanged, sendPasswordResetEmail, generatePasswordResetLink , signInWithCustomToken } = require("firebase/auth"); 
 const { getAuth, signOut } = require("firebase/auth");
 const firebase = require('firebase/app');
 const {sendEmail} = require('./email')
