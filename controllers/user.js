@@ -157,10 +157,32 @@ const reset_password = async (req, res) => {
   }
 };
 
+const verifyToken = async (req, res) => {
+  const token = req.headers.authorization;
+  if (!token) {
+    return res.status(401).json({ message: 'No token provided' });
+    
+  }
+
+  signInWithCustomToken(getAuth(),token).then((userCredential) => {
+  
+    userCredential.user.getIdToken().then((idToken) => {
+      console.log(idToken)  
+      
+    });
+    res.status(200).json({ message: 'Token is valid', data: userCredential });
+  }).catch((error) => {
+    res.status(401).json({ message: 'Token is invalid', error: error.message });
+  })
+
+
+
+
 
 module.exports = {
   register,
   login,
   logout,
   reset_password,
+  verifyToken
 };
