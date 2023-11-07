@@ -102,10 +102,15 @@ const login = async (req, res) => {
         
         
     await signInWithEmailAndPassword(getAuth(), email, password)
+
+
+    const customToken = await admin.auth().createCustomToken(userRecord.uid);
+       console.log(customToken)
+       
     
     
 
-    res.status(200).json({ message: 'Login successful', data: userRecord});
+    res.status(200).json({ message: 'Login successful', token: customToken , data: userRecord});
   } catch (error) {
     console.error('Error during login:', error);
 
