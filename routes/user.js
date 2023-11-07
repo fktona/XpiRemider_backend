@@ -12,6 +12,6 @@ router.post('/signup' , register)
 router.post('/login' , login)
 router.post('/logout/' , logout)
 router.post('/reset_password' , reset_password)
-router.post('/verify_token' , verifyToken)
+router.get('/verify_token' , verifyToken)
 
 module.exports = router
