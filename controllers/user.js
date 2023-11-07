@@ -43,7 +43,9 @@ console.log(emailVerificationLink)
 
     delete userData.password;
     
-  
+  const customToken = await admin.auth().createCustomToken(userRecord.uid);
+       
+       
 
     const db = admin.firestore()
     const userDetailsRef = db.collection('users')
@@ -53,7 +55,7 @@ console.log(emailVerificationLink)
     sendEmail(email , emailVerificationLink , firstname)
     
     
-    res.status(201).json({ message: 'User created successfully' , data: userRecord});
+    res.status(201).json({ message: 'User created successfully' , token: customToken,  data: userRecord });
     console.log(userRecord);
   } catch (error) {
     console.error('Error creating new user:', error);
