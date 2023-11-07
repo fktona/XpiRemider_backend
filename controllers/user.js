@@ -7,7 +7,6 @@ const firebase = require('firebase/app');
 const {sendEmail} = require('./email')
 
 
-
   const register = async (req, res) => {
   const { firstname, lastname, password, email ,shop_name } = req.body;
 
