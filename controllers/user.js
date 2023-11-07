@@ -174,6 +174,7 @@ const verifyToken = async (req, res) => {
   }).catch((error) => {
     res.status(401).json({ message: 'Token is invalid', error: error.message });
   })
+}
 
 
 
