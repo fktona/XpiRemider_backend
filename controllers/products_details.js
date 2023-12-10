@@ -110,7 +110,7 @@ const updateProductDetails = async (req, res) => {
   const updateData = req.body;
 
   if (!updateData) {
-    return res.status(400).json({ error: "Update data is missing." data: updateData});
+    return res.status(400).json({ error: "Update data is missing.", data: updateData});
   }
   
   if (!validateDates(updateData.production_date, updateData.expiring_date)) {
