@@ -10,7 +10,7 @@ const {
 
 const router = express.Router();
 
-router.post('/products/:userId', products_details);
+router.post('/product/:userId', products_details);
 router.get('/get_products/:userId', getAllProducts);
 router.get('/exp_products/:userId', checkAndSendExpiryEmail);
 router.patch('/update_product/:userId/:productId', updateProductDetails); 
