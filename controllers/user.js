@@ -45,7 +45,7 @@ console.log(emailVerificationLink)
     
   const customToken = await admin.auth().createCustomToken(userRecord.uid);
        
-       
+       const user = {...userRecord , userRecord}
 
     const db = admin.firestore()
     const userDetailsRef = db.collection('users')
@@ -55,7 +55,7 @@ console.log(emailVerificationLink)
     sendEmail(email , emailVerificationLink , firstname)
     
     
-    res.status(201).json({ message: 'User created successfully' , token: customToken,  data: userRecord });
+    res.status(201).json({ message: 'User created successfully' , token: customToken,  data: user });
     console.log(userRecord);
   } catch (error) {
     console.error('Error creating new user:', error);
@@ -91,14 +91,14 @@ const login = async (req, res) => {
     
     const userRecord = await admin.auth().getUserByEmail(email);
     
-    if(!userRecord?.emailVerified){
+    // if(!userRecord?.emailVerified){
       
-      res.status(500).json({ message: 'email not verified verification link sent to mail ' ,data: userRecord})
-      const  emailVerificationLink = await admin.auth().generateEmailVerificationLink(email)
+    //   res.status(500).json({ message: 'email not verified verification link sent to mail ' ,data: userRecord})
+    //   const  emailVerificationLink = await admin.auth().generateEmailVerificationLink(email)
       
-      sendEmail(email , emailVerificationLink , email)
-      return
-        }
+    //   sendEmail(email , emailVerificationLink , email)
+    //   return
+    //     }
         
         
     await signInWithEmailAndPassword(getAuth(), email, password)
