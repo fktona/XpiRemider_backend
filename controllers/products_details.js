@@ -80,9 +80,9 @@ const getAllProducts = async (req ,res) => {
   
   
   getProducts.forEach((doc) => {
-      const productId = doc.id;
+      const id = doc.id;
       const productData = doc.data();
-      allProducts.push({  productId, ...productData });
+      allProducts.push({  id, ...productData });
     });
   
   
