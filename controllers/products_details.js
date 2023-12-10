@@ -82,7 +82,14 @@ const getAllProducts = async (req ,res) => {
   getProducts.forEach((doc) => {
       const id = doc.id;
       const productData = doc.data();
-      allProducts.push({  id, ...productData });
+      let status = ''
+    if (productData.days_remaining < 1 ){
+
+      status = 'expired'
+    }else{
+        status = 'active'
+    }
+      allProducts.push({  id , status, ...productData });
     });
   
   
