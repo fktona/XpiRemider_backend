@@ -106,7 +106,7 @@ const login = async (req, res) => {
 
     const customToken = await admin.auth().createCustomToken(userRecord.uid);
        console.log(customToken)
-       
+         const db = admin.firestore()
     const userDetailsRef = await db.collection('users').doc(userRecord.uid).get()
     const userData = userDetailsRef.data()
        const user = {...userRecord , userData}
