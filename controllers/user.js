@@ -107,8 +107,8 @@ const login = async (req, res) => {
     const customToken = await admin.auth().createCustomToken(userRecord.uid);
        console.log(customToken)
        
-    const userDetailsRef = db.collection('users').doc(userRecord.uid).get()
-    const userData = userDetailsRef[0].data()
+    const userDetailsRef = await db.collection('users').doc(userRecord.uid).get()
+    const userData = userDetailsRef.data()
        const user = {...userRecord , userData}
 
     res.status(200).json({ message: 'Login successful', token: customToken , data: user});
