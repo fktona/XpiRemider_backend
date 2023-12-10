@@ -45,14 +45,14 @@ console.log(emailVerificationLink)
     
   const customToken = await admin.auth().createCustomToken(userRecord.uid);
        
-       const user = {...userRecord , userRecord}
+       const user = {...userRecord , userData}
 
     const db = admin.firestore()
     const userDetailsRef = db.collection('users')
 
     await userDetailsRef.add(userData);
     
-    sendEmail(email , emailVerificationLink , firstname)
+    //sendEmail(email , emailVerificationLink , firstname)
     
     
     res.status(201).json({ message: 'User created successfully' , token: customToken,  data: user });
