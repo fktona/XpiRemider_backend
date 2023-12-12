@@ -114,7 +114,7 @@ const updateProductDetails = async (req, res) => {
   }
   
   if (!validateDates(updateData.production_date, updateData.expiring_date)) {
-  return res.status(400).json({ error: "Production date must be earlier than the expiry date and not greater than the current date." });
+  return res.status(400).json({ error: "Production date must be earlier than the expiry date and not greater than the current date." ,data: updateData});
 }
 
   const db = admin.firestore();
