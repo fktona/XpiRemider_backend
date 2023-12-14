@@ -1,6 +1,7 @@
 
 const admin = require('firebase-admin');
 const {sendExpiryEmail} = require('./email')
+const {sendInApp} = require('./novoInapp')
 
 
 
@@ -44,13 +45,16 @@ const updateDaysRemainingForAllUsers = async (req ,res) => {
   await    getProducts.forEach((doc) => {
         const productData = doc.data();
         expiringProducts.push(productData)
-      });
+      }); 
+
+      console.log(expiringProducts)
 
       if (expiringProducts.length > 0) {
      
         const userEmail = userdata.email; 
         name = userdata.firstname
-        sendExpiryEmail(userEmail, expiringProducts, name);
+        //sendExpiryEmail(userEmail, expiringProducts, name);
+        sendInApp(userId, expiringProducts)
         
         console.log(userdata.email , "sent")
       }else{

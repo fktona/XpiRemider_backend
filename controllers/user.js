@@ -1,5 +1,5 @@
 const admin = require('firebase-admin');
-const bcrypt = require('bcrypt');
+
 
 const { signInWithEmailAndPassword , onAuthStateChanged, sendPasswordResetEmail, generatePasswordResetLink , signInWithCustomToken } = require("firebase/auth"); 
 const { getAuth, signOut } = require("firebase/auth");
@@ -8,7 +8,7 @@ const {sendEmail} = require('./email')
 
 
   const register = async (req, res) => {
-  const { firstname, lastname, password, email ,shop_name } = req.body;
+  const { firstname, lastname, password, email ,shop_name,phone_number } = req.body;
 
   try {
     
@@ -25,7 +25,8 @@ const {sendEmail} = require('./email')
     const userRecord = await admin.auth().createUser({
       email: email,
       password: password,
-      displayName:firstname
+      displayName:firstname,
+      phoneNumber:phone_number
     });
 
     console.log('Successfully created new user:', userRecord);
@@ -38,19 +39,19 @@ console.log(emailVerificationLink)
       lastname,
       email,
       shop_name,
+      phone_number
      
     };
 
-    delete userData.password;
     
   const customToken = await admin.auth().createCustomToken(userRecord.uid);
        
-       const user = {...userRecord , userData}
+       const user = {...userRecord , ...userData}
 
     const db = admin.firestore()
-    const userDetailsRef = db.collection('users')
+    const userDetailsRef = db.collection('users').doc(userRecord.uid)
 
-    await userDetailsRef.add(userData);
+    await userDetailsRef.set(userData);
     
     //sendEmail(email , emailVerificationLink , firstname)
     
@@ -103,24 +104,26 @@ const login = async (req, res) => {
         
     await signInWithEmailAndPassword(getAuth(), email, password)
 
-
+   
+    
     const customToken = await admin.auth().createCustomToken(userRecord.uid);
-       console.log(customToken)
-         const db = admin.firestore()
-    const userDetailsRef = await db.collection('users').doc(userRecord.uid).get()
-    const userData = userDetailsRef.data()
-       const user = {...userRecord , userData}
+    const db = admin.firestore();
+    const userData = await db.collection('users').where("id", "==" , userRecord.uid ).get();
+    
+        const user = userData.docs[0].data();
+        console.log(user);
+const userInfo = {...userRecord ,...user}
 
-    res.status(200).json({ message: 'Login successful', token: customToken , data: user});
+    return res.status(200).json({ message: 'Login successful', token: customToken , data: userInfo});
   } catch (error) {
     console.error('Error during login:', error);
 
     if (error.code === 'auth/user-not-found') {
-      res.status(401).json({ message: 'User Not Found ' });
+      return res.status(401).json({ message: 'User Not Found ' });
     } else if (error.code === 'auth/wrong-password') {
       res.status(401).json({ message: 'Wrong password' });
     } else {
-      res.status(500).json({ message: 'Internal server error', error: error.message });
+      return res.status(500).json({ message: 'Internal server error', error: error.message });
     }
   }
 };
@@ -147,6 +150,11 @@ const reset_password = async (req, res) => {
 
     if (!email.match(emailRegex)) {
       return res.status(400).json({ message: 'Invalid email address' });
+    }
+    const userRecord = await admin.auth().getUserByEmail(email);
+
+    if(userRecord.lenth < 1){
+      return res.status(401).json({ message: 'Email not Registered' });
     }
        const resetLink = await sendPasswordResetEmail(getAuth() , email);
 //sendEmail(email, resetLink, email);

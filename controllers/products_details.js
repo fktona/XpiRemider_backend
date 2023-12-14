@@ -56,7 +56,11 @@ const daysRemaining = Math.ceil(days_remaining / (1000 * 60 * 60 * 24));
   const addedProducts =  await db.collection('users').doc(userId).collection('products_details').add(product_data);
     
    const ProductSnapshot = await addedProducts.get();
- const newProductData = ProductSnapshot.data()
+   const id = ProductSnapshot.id
+  const productInfo = ProductSnapshot.data()
+ let newProductData = []
+
+ newProductData.push({id , ...productInfo})
     res.status(201).json({ message: 'Product details added successfully' ,
     data: newProductData});
   } catch (error) {
@@ -77,12 +81,23 @@ const getAllProducts = async (req ,res) => {
       .collection('products_details')
       .orderBy('created_at', 'desc')
       .get();
+
+      
+const Timestamp = admin.firestore.Timestamp;
   
-  
+      
   getProducts.forEach((doc) => {
       const id = doc.id;
       const productData = doc.data();
-      let status = ''
+      const firestoreTimestamp = Timestamp.now(); 
+      const date = firestoreTimestamp.toDate();
+      const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+      const days_remaining =  new Date(productData.expiry_date).getTime() - new Date().getTime() 
+      const daysRemaining = Math.ceil(days_remaining / (1000 * 60 * 60 * 24));
+      
+const updatedProductDataWithDaysRemaining = {...productData , days_remaining: daysRemaining}
+
+   let status = ''
     if (productData.days_remaining < 1 ){
 
       status = 'expired'
@@ -112,27 +127,40 @@ const updateProductDetails = async (req, res) => {
   if (!updateData) {
     return res.status(400).json({ error: "Update data is missing.", data: updateData});
   }
-  
-  if (!validateDates(updateData.production_date, updateData.expiring_date)) {
-  return res.status(400).json({ error: "Production date must be earlier than the expiry date and not greater than the current date." ,data: updateData});
-}
+
+  const { production_date, expiry_date } = updateData;
+  if (!validateDates(production_date, expiry_date)) {
+  return res.status(400).json({ error: "Production date must be earlier than the expiry date and not greater than the current date." , data: updateData });
+
 
   const db = admin.firestore();
+  const Timestamp = admin.firestore.Timestamp;
 
   try {
     const productRef = db.collection('users').doc(userId).collection('products_details').doc(productId);
 
-   const updatedProduct = await productRef.update(updateData);
- const updatedProductSnapshot = await productRef.get();
+    const firestoreTimestamp = Timestamp.now(); 
+const date = firestoreTimestamp.toDate();
+const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+const days_remaining =  new Date(expiry_date).getTime() - new Date().getTime() 
+const daysRemaining = Math.ceil(days_remaining / (1000 * 60 * 60 * 24));
+
+
+
+
+ const updatedProductSnapshot = await productRef.get()
+
  const updatedProductData = updatedProductSnapshot.data();
-    res.status(200).json({ message: 'Product details updated successfully' ,
-    updateProduct: updatedProductData
+ const updatedProductDataWithDaysRemaining = {...updateData , id:updatedProductSnapshot.id, days_remaining: daysRemaining , edited_at: formattedDate}
+  await productRef.update(updatedProductDataWithDaysRemaining);
+   return res.status(200).json({ message: 'Product details updated successfully' ,
+    updateProduct: updatedProductDataWithDaysRemaining
     });
     
     
   } catch (error) {
     console.error('Error updating product details:', error);
-    res.status(500).json({ message: 'Internal server error', error: error.message });
+   return res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 };
 
@@ -146,10 +174,10 @@ const deleteProduct = async (req, res) => {
 
     await productRef.delete();
 
-    res.status(200).json({ message: 'Product deleted successfully' });
+    return res.status(200).json({ message: 'Product deleted successfully' });
   } catch (error) {
     console.error('Error deleting product:', error);
-    res.status(500).json({ message: 'Internal server error', error: error.message });
+   return res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 };
 
