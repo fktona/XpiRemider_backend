@@ -6,8 +6,8 @@ const Mailgen = require('mailgen');
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'faithadetona@gmail.com',
-    pass:  'rrktmuexsbtebmxc',
+    user: 'xpireminder@gmail.com',
+    pass:  'bcvwryerjvcvttse',
   },
 });
  const sendEmail = async ( email ,  emailVerificationLink ,name) => {
@@ -123,7 +123,7 @@ const sendExpiryEmail = async (email, products) => {
     let emailBody = mailGenerator.generate(msg);
 
     let mailOptions = {
-      from: 'your-email@gmail.com',
+      from: 'xpireminder@gmail.com',
       to: email,
       subject: 'Products Expiry Reminder',
       html: emailBody,
