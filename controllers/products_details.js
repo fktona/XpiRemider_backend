@@ -127,11 +127,10 @@ const updateProductDetails = async (req, res) => {
   if (!updateData) {
     return res.status(400).json({ error: "Update data is missing.", data: updateData});
   }
-
   const { production_date, expiry_date } = updateData;
   if (!validateDates(production_date, expiry_date)) {
   return res.status(400).json({ error: "Production date must be earlier than the expiry date and not greater than the current date." , data: updateData });
-
+}
 
   const db = admin.firestore();
   const Timestamp = admin.firestore.Timestamp;
