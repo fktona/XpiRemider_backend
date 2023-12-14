@@ -12,7 +12,9 @@ const { initializeApp, getAnalytics } = require("firebase/app");
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin:"*"
+}));
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
