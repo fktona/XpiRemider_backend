@@ -36,7 +36,7 @@ const firebaseApp = initializeApp(firebaseConfig);
 app.use('/api/auth', auth);
 app.use('/api', products);
 
-cron.schedule('*/1 * * * *', updateDaysRemainingForAllUsers);
+cron.schedule('*/17654 * * * *', updateDaysRemainingForAllUsers);
 
 
 const PORT = process.env.PORT || 3000;
