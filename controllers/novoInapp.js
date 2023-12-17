@@ -12,10 +12,15 @@ const sendInApp = async (user, products) => {
         },
         payload: {
             productName: product.product_name,
-            daysRemaining:product.days_remaining
+            daysRemaining:product.days_remaining,
+            batchNumber:product?.batch_number,
+            expiryDate:product.expiry_date,
+            quantity:product?.quantity,
+            price:product?.price,
           }
     }
     );
+    console.log("sent"  )
     }
         catch(err){
             console.log(err)

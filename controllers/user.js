@@ -1,6 +1,6 @@
 const admin = require('firebase-admin');
 
-
+const{updateDaysRemainingForAllUsers} = require('./updating_days')
 const { signInWithEmailAndPassword , onAuthStateChanged, sendPasswordResetEmail, generatePasswordResetLink , signInWithCustomToken } = require("firebase/auth"); 
 const { getAuth, signOut } = require("firebase/auth");
 const firebase = require('firebase/app');
@@ -113,6 +113,8 @@ const login = async (req, res) => {
         const user = userData.docs[0].data();
         console.log(user);
 const userInfo = {...userRecord ,...user}
+
+    updateDaysRemainingForAllUsers()
 
     return res.status(200).json({ message: 'Login successful', token: customToken , data: userInfo});
   } catch (error) {

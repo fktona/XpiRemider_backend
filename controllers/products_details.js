@@ -14,17 +14,12 @@ const validateDates = (productionDate, expiryDate) => {
 const products_details = async (req, res) => {
   const { userId } = req.params;
   const { product_name, expiry_date, batch_number, quantity, production_date, price } = req.body;
+  const mising = ["product_name", "expiry_date", "batch_number", "quantity", "production_date", "price"].filter((key) => !req.body[key]);
 
-  // if (
-  //   !product_name ||
-  //   !expiry_date ||
-  //   !batch_number ||
-  //   !quantity ||
-  //   !production_date ||
-  //   !price
-  // ) {
-  //   return res.status(400).json({ error: "One or more fields are empty." });
-  // }
+    if (mising.length > 0) {
+    return res.status(400).json({ error: `The following fields are missing: ${mising.join(", ")}` });
+    }
+
   
   if (!validateDates(production_date, expiry_date)) {
   return res.status(400).json({ error: "Production date must be earlier than the expiry date and not greater than the current date." });

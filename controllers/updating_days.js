@@ -54,7 +54,7 @@ const updateDaysRemainingForAllUsers = async (req ,res) => {
         const userEmail = userdata.email; 
         name = userdata.firstname
         //sendExpiryEmail(userEmail, expiringProducts, name);
-        sendInApp(userId, expiringProducts)
+        await sendInApp(userId, expiringProducts)
         
         console.log(userdata.email , "sent")
       }else{
@@ -64,7 +64,7 @@ const updateDaysRemainingForAllUsers = async (req ,res) => {
   } catch (error) {
     console.error('Error updating days_remaining for all users:', error);
   }finally{
-    res.send("Done For Today ")
+   // res.send("done")
   }
 };
 
