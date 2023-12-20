@@ -9,7 +9,7 @@ const sendSms = async (user , UserName , phone, expiringProducts) => {
     {
         to: {
         subscriberId: user,
-        phone:"+2348135987576"
+        phone: phone
         },
         payload: {
            message:`Hello, ${ UserName ? UserName.charAt(0).toUpperCase() + UserName.slice(1).toLowerCase() : 'Dear'} 
