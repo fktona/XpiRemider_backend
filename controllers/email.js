@@ -65,7 +65,7 @@ let mailOptions = {
      console.log(err)
    }
  }
-const sendExpiryEmail = async (email, products) => {
+const sendExpiryEmail = async (email, products, Username) => {
   try {
     let mailGenerator = new Mailgen({
       theme: 'default',
@@ -126,7 +126,107 @@ const sendExpiryEmail = async (email, products) => {
       from: 'xpireminder@gmail.com',
       to: email,
       subject: 'Products Expiry Reminder',
-      html: emailBody,
+      html:` <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>XpireMinder Reminder</title>
+        <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    header {
+      background-color: #e95420;
+      padding: 15px;
+      text-align: center;
+      color: #fff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #e95420;
+      color: #fff;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 20px auto;
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      background-color: #e95420;
+      color: #fff;
+    }
+  </style>
+      </head>
+      <body>
+        <div class="container">
+        <header>
+        <h1>Hello, ${ Username ? Username.charAt(0).toUpperCase() + Username.slice(1).toLowerCase() : 'Dear'},</h1>
+        <p>Your XpireMinder Expiry Notifications</p>
+      </header>
+      
+  
+          <table>
+            <thead>
+              <tr>
+                <th>Product Name</th>
+                <th>Expiry Date</th>
+                <th>Qty</th>
+                <th>Days to Expiry</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${products.map(product => `
+                <tr>
+                  <td>${product.product_name}</td>
+                  <td>${product.expiry_date}</td>
+                  <td>${product.quantity}</td>
+                  <td>${product.days_remaining < 1 ? "Expired":product.days_remaining }</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+  
+          <img src="path/to/your/logo.png" alt="Company Logo">
+  
+          <footer>
+            &copy; 2023 XpireMinder. All rights reserved.
+          </footer>
+        </div>
+      </body>
+      </html>
+    `
     };
 
     await transporter.sendMail(mailOptions, (error, info) => {

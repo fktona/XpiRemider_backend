@@ -99,7 +99,7 @@ const updatedProductDataWithDaysRemaining = {...productData , days_remaining: da
     }else{
         status = 'active'
     }
-      allProducts.push({  id , status, ...productData });
+      allProducts.push({  id , status, ...updatedProductDataWithDaysRemaining});
     });
   
   

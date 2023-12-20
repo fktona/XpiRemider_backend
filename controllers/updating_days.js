@@ -2,10 +2,11 @@
 const admin = require('firebase-admin');
 const {sendExpiryEmail} = require('./email')
 const {sendInApp} = require('./novoInapp')
+const {sendSms} = require('./sms')
 
 
 
-const updateDaysRemainingForAllUsers = async (req ,res) => {
+const updateDaysRemainingForAllUsers = async ( user_id) => {
   const db = admin.firestore();
   const today = new Date();
 
@@ -47,16 +48,48 @@ const updateDaysRemainingForAllUsers = async (req ,res) => {
         expiringProducts.push(productData)
       }); 
 
-      console.log(expiringProducts)
+      //console.log(expiringProducts)
 
       if (expiringProducts.length > 0) {
      
         const userEmail = userdata.email; 
-        name = userdata.firstname
-        //sendExpiryEmail(userEmail, expiringProducts, name);
-        await sendInApp(userId, expiringProducts)
+        const  UserName = userdata.firstname
+        const phone = userdata.phone_number
+
         
-        console.log(userdata.email , "sent")
+        const mondayFlagDocRef = db.collection('notification').doc('mondayEmailSent');
+        const mondayFlagSnapshot = await mondayFlagDocRef.get();
+
+        if (today.getDay() == 1) {
+         
+        
+
+         if (!mondayFlagSnapshot.exists) {
+          await sendExpiryEmail(userEmail, expiringProducts, UserName);
+          await sendSms(userId,UserName, phone, expiringProducts )
+          console.log("sending emailing.....")
+          await mondayFlagDocRef.set({ sent: true });
+         } else{
+          console.log(" monday email already  sent ")
+         }
+           
+        }else {
+          if (mondayFlagSnapshot.exists) {
+            mondayFlagDocRef.delete()
+            console.log('deleting ');
+            
+          }
+        
+        }
+       
+        if(userId == user_id){
+        await sendInApp(userId, expiringProducts)
+  
+        }else{
+          console.log('not')
+        }
+        
+      
       }else{
         console.log("no product" , userdata.email)
       }
