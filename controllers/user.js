@@ -53,7 +53,7 @@ console.log(emailVerificationLink)
 
     await userDetailsRef.set(userData);
     
-    //sendEmail(email , emailVerificationLink , firstname)
+    sendEmail(email , emailVerificationLink , firstname)
     
     
     res.status(201).json({ message: 'User created successfully' , token: customToken,  data: user });
