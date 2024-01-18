@@ -31,7 +31,7 @@ const sendExpiryMsg = async (req, res) => {
   if (expiringProducts.length > 0) {
     await sendExpiryEmail(userEmail, expiringProducts, UserName);
     res.status(200).json({ message: 'Email sent successfully' });
-    // await sendSms(userId, UserName, phone, expiringProducts);
+ await sendSms(userId, UserName, phone, expiringProducts);
     console.log("sending emailing.....");
   }}
   catch(err){
