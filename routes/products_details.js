@@ -8,7 +8,7 @@ const {
   
 } = require('../controllers/products_details');
 
-const {updateDaysRemainingForAllUsers }= require('../controllers/updating_days')
+const {sendExpiryMsg}= require('../controllers/sendNotice')
 
 const router = express.Router();
 
@@ -17,7 +17,7 @@ router.get('/get_products/:userId', getAllProducts);
 router.get('/exp_products/:userId', checkAndSendExpiryEmail);
 router.patch('/update_product/:userId/:productId', updateProductDetails); 
 router.get('/exp_product/:userId', checkAndSendExpiryEmail);
-router.post('/send_exp', updateDaysRemainingForAllUsers);
+router.post('/send_exp/:userId', sendExpiryMsg);
 router.delete('/delete_product/:userId/:productId', deleteProduct); 
 
 module.exports = router;

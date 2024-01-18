@@ -6,7 +6,7 @@ const {sendSms} = require('./sms')
 
 
 
-const updateDaysRemainingForAllUsers = async ( req,res , user_id) => {
+const updateDaysRemainingForAllUsers = async (user_id) => {
   const db = admin.firestore();
   const today = new Date();
 
@@ -60,7 +60,7 @@ const updateDaysRemainingForAllUsers = async ( req,res , user_id) => {
         const mondayFlagDocRef = db.collection('notification').doc('mondayEmailSent');
         const mondayFlagSnapshot = await mondayFlagDocRef.get();
 
-        //if (today.getDay() == 1) {
+        if (today.getDay() == 1) {
          
         
 
@@ -73,17 +73,17 @@ const updateDaysRemainingForAllUsers = async ( req,res , user_id) => {
           console.log(" monday email already  sent ")
          }
            
-        // }else {
+         }else {
           if (mondayFlagSnapshot.exists) {
             mondayFlagDocRef.delete()
             console.log('deleting ');
             
          }
         
-       // }
-       
+        }
+        
         if (userId == user_id) {
-          const sendInAppFlagDocRef = db.collection('notification').doc('sendInAppCalled');
+          const sendInAppFlagDocRef = db.collection('notification').doc(userId);
           const sendInAppFlagSnapshot = await sendInAppFlagDocRef.get();
         
           if (!sendInAppFlagSnapshot.exists) {
@@ -97,7 +97,7 @@ const updateDaysRemainingForAllUsers = async ( req,res , user_id) => {
         // ...
         
         if (today.getHours() == 23 && today.getMinutes() == 59) {
-          const sendInAppFlagDocRef = db.collection('notification').doc('sendInAppCalled');
+          const sendInAppFlagDocRef = db.collection('notification').doc(userId);
           const sendInAppFlagSnapshot = await sendInAppFlagDocRef.get();
         
           if (sendInAppFlagSnapshot.exists) {
@@ -105,14 +105,15 @@ const updateDaysRemainingForAllUsers = async ( req,res , user_id) => {
           }
         }
       
-      }else{
+             }
+              else{
         console.log("no product" , userdata.email)
       }
     }
   } catch (error) {
     console.error('Error updating days_remaining for all users:', error);
   }finally{
-    res.status(204).json({messega:"done"})
+  return
   }
 };
 
