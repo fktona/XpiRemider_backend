@@ -39,6 +39,7 @@ app.use('/api/auth', auth);
 app.use('/api', products);
 
 
+
 cron.schedule('0 0 * * 1', () => updateDaysRemainingForAllUsers(""));
 
 
