@@ -66,7 +66,7 @@ const updateDaysRemainingForAllUsers = async (user_id) => {
 
          if (!mondayFlagSnapshot.exists) {
           await sendExpiryEmail(userEmail, expiringProducts, UserName);
-          await sendSms(userId,UserName, phone, expiringProducts )
+        //  await sendSms(userId,UserName, phone, expiringProducts )
           console.log("sending emailing.....")
           await mondayFlagDocRef.set({ sent: true });
          } else{
