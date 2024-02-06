@@ -5,7 +5,7 @@ const { sendExpiryEmail } = require('./email');
 const updateDaysRemainingForAllUsers = async (req , res) => {
   const db = admin.firestore();
   const today = new Date();
-, 
+  
   try {
     const usersSnapshot = await db.collection('users').get();
 
