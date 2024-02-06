@@ -2,7 +2,7 @@ const admin = require('firebase-admin');
 const { sendExpiryEmail } = require('./email');
 // Import other necessary modules here
 
-const updateDaysRemainingForAllUsers = async () => {
+const updateDaysRemainingForAllUsers = async (req , res) => {
   const db = admin.firestore();
   const today = new Date();
 
@@ -53,6 +53,7 @@ const updateDaysRemainingForAllUsers = async () => {
             //  await sendSms(userId,UserName, phone, expiringProducts )
 
         console.log("message sent")
+      return res.status(201).json({message: "message sent "})
          
       }
     }
