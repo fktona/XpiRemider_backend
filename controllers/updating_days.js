@@ -5,7 +5,7 @@ const { sendExpiryEmail } = require('./email');
 const updateDaysRemainingForAllUsers = async (req , res) => {
   const db = admin.firestore();
   const today = new Date();
-
+, 
   try {
     const usersSnapshot = await db.collection('users').get();
 
@@ -53,12 +53,13 @@ const updateDaysRemainingForAllUsers = async (req , res) => {
             //  await sendSms(userId,UserName, phone, expiringProducts )
 
         console.log("message sent")
-      return res.status(201).json({message: "message sent "})
-         
+      
       }
     }
 
     await Promise.all(updatePromises);
+    return res.status(201).json({message: "message sent "})
+          
   } catch (error) {
     console.error('Error updating days_remaining for all users:', error);
   }
