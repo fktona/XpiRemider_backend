@@ -60,7 +60,7 @@ const updateDaysRemainingForAllUsers = async (user_id) => {
         const mondayFlagDocRef = db.collection('notification').doc('mondayEmailSent');
         const mondayFlagSnapshot = await mondayFlagDocRef.get();
 
-        if (today.getDay() == 1) {
+        
          
         
 
@@ -73,14 +73,9 @@ const updateDaysRemainingForAllUsers = async (user_id) => {
           console.log(" monday email already  sent ")
          }
            
-         }else {
-          if (mondayFlagSnapshot.exists) {
-            mondayFlagDocRef.delete()
-            console.log('deleting ');
-            
-         }
+         
         
-        }
+        
         
         if (userId == user_id) {
           const sendInAppFlagDocRef = db.collection('notification').doc(userId);
