@@ -1,21 +1,20 @@
-
 const admin = require('firebase-admin');
-const {sendExpiryEmail} = require('./email')
-const {sendInApp} = require('./novoInapp')
-const {sendSms} = require('./sms')
+const { sendExpiryEmail } = require('./email');
+// Import other necessary modules here
 
-
-
-const updateDaysRemainingForAllUsers = async (user_id) => {
+const updateDaysRemainingForAllUsers = async () => {
   const db = admin.firestore();
   const today = new Date();
 
   try {
     const usersSnapshot = await db.collection('users').get();
 
+    const updatePromises = [];
+
     for (const userDoc of usersSnapshot.docs) {
       const userId = userDoc.id;
-            const userdata = userDoc.data();
+      const userData = userDoc.data();
+
       const productsSnapshot = await userDoc.ref
         .collection('products_details')
         .get();
@@ -24,96 +23,46 @@ const updateDaysRemainingForAllUsers = async (user_id) => {
 
       productsSnapshot.forEach((doc) => {
         const productData = doc.data();
-        
-          const daysRemaining = Math.ceil(
-            (new Date(productData.expiry_date).getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
-          );
-          batch.update(doc.ref, { days_remaining: daysRemaining });
-        
+        const expiryDate = new Date(productData.expiry_date);
+        const daysRemaining = Math.ceil((expiryDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+        batch.update(doc.ref, { days_remaining: daysRemaining });
       });
 
-      await batch.commit();
-      
+      updatePromises.push(batch.commit());
+
       const expiringProducts = [];
-      
-      const getProducts = await db
-  .collection('users')
-  .doc(userId)
-  .collection('products_details')
-  .where('days_remaining', '<', 30)
-  .get();
 
-  await    getProducts.forEach((doc) => {
-        const productData = doc.data();
-        expiringProducts.push(productData)
-      }); 
+      const expiringProductsQuery = await db
+        .collection('users')
+        .doc(userId)
+        .collection('products_details')
+        .where('days_remaining', '<', 30)
+        .get();
 
-      //console.log(expiringProducts)
+      expiringProductsQuery.forEach((doc) => {
+        expiringProducts.push(doc.data());
+      });
 
       if (expiringProducts.length > 0) {
-     
-        const userEmail = userdata.email; 
-        const  UserName = userdata.firstname
-        const phone = userdata.phone_number
+        const userEmail = userData.email;
+        const userName = userData.firstname;
+        const phone = userData.phone_number;
 
         
-        const mondayFlagDocRef = db.collection('notification').doc('mondayEmailSent');
-        const mondayFlagSnapshot = await mondayFlagDocRef.get();
+        await sendExpiryEmail(userEmail, expiringProducts, userName);
+            //  await sendSms(userId,UserName, phone, expiringProducts )
 
-        
+        console.log("message sent")
          
-        
-
-         if (!mondayFlagSnapshot.exists) {
-          await sendExpiryEmail(userEmail, expiringProducts, UserName);
-        //  await sendSms(userId,UserName, phone, expiringProducts )
-          console.log("sending emailing.....")
-          await mondayFlagDocRef.set({ sent: true });
-         } else{
-          console.log(" monday email already  sent ")
-         }
-           
-         
-        
-        
-        
-        if (userId == user_id) {
-          const sendInAppFlagDocRef = db.collection('notification').doc(userId);
-          const sendInAppFlagSnapshot = await sendInAppFlagDocRef.get();
-        
-          if (!sendInAppFlagSnapshot.exists) {
-            await sendInApp(userId, expiringProducts);
-            await sendInAppFlagDocRef.set({ called: true });
-          }
-        } else {
-          console.log('not');
-        }
-        
-        // ...
-        
-        if (today.getHours() == 23 && today.getMinutes() == 59) {
-          const sendInAppFlagDocRef = db.collection('notification').doc(userId);
-          const sendInAppFlagSnapshot = await sendInAppFlagDocRef.get();
-        
-          if (sendInAppFlagSnapshot.exists) {
-            sendInAppFlagDocRef.delete();
-          }
-        }
-      
-             }
-              else{
-        console.log("no product" , userdata.email)
       }
     }
+
+    await Promise.all(updatePromises);
   } catch (error) {
     console.error('Error updating days_remaining for all users:', error);
-  }finally{
-  return
   }
 };
 
-
-module.exports ={
+module.exports = {
   updateDaysRemainingForAllUsers
-}
-
+};
