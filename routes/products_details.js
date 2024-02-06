@@ -9,7 +9,7 @@ const {
 } = require('../controllers/products_details');
 
 const {sendExpiryMsg}= require('../controllers/sendNotice')
-const {updateDaysRemainingForAllUsers} require('../controllers/updating_days')
+const {updateDaysRemainingForAllUsers} =require('../controllers/updating_days')
 
 
 const router = express.Router();
