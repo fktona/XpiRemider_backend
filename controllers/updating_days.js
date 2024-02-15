@@ -50,7 +50,7 @@ const updateDaysRemainingForAllUsers = async (req , res) => {
 
         
         await sendExpiryEmail(userEmail, expiringProducts, userName);
-            //  await sendSms(userId,UserName, phone, expiringProducts )
+             await sendSms(userId,UserName, phone, expiringProducts )
 
         console.log("message sent")
       
