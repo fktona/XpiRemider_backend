@@ -3,7 +3,7 @@ const {Novu} = require('@novu/node')
 const sendSms = async (user , UserName , phone, expiringProducts) => {
 
     
-    const novu = new Novu("5f1e6fe959dc67d0185587253cb49d21");
+    const novu = new Novu("fb4a450decae0545729dd0df0178d519");
     try {
         await novu.trigger('sms',
     {
