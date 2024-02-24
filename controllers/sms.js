@@ -5,7 +5,7 @@ const sendSms = async (user , UserName , phone, expiringProducts) => {
     
     const novu = new Novu("fb4a450decae0545729dd0df0178d519");
     try {
-        await novu.trigger('sms',
+        await novu.trigger('untitled',
     {
         to: {
         subscriberId: user,
